@@ -6,14 +6,16 @@ class GameManager
     public const int SCREEN_HEIGHT = 600;
 
     private string _title;
+    private List<GameObject> _gameObjects = new List<GameObject>();
 
     public GameManager()
     {
         _title = "CSE 210 Game";
+
     }
 
     /// <summary>
-    /// The overall loop that controls the game. It calls functions to
+    /// The overall loop that csontrols the game. It calls functions to
     /// handle interactions, update game elements, and draw the screen.
     /// </summary>
     public void Run()
@@ -47,7 +49,10 @@ class GameManager
     /// </summary>
     private void InitializeGame()
     {
-
+        Player player = new Player(50,50);
+        _gameObjects.Add(player);
+        Bomb bomb = new Bomb(100, 100);
+        _gameObjects.Add(bomb);
     }
 
     /// <summary>
@@ -55,6 +60,10 @@ class GameManager
     /// </summary>
     private void HandleInput()
     {
+        foreach (GameObject item in _gameObjects)
+        {
+            item.HandleInput();
+        }
 
     }
 
@@ -71,6 +80,9 @@ class GameManager
     /// </summary>
     private void DrawElements()
     {
-
+        foreach (GameObject entity in _gameObjects) {
+            entity.Draw();
+            Console.WriteLine("printed objects");
+        }
     }
 }
