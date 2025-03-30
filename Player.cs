@@ -3,47 +3,63 @@
     public class Player : GameObject {
 
 
-
-        public Player(int x, int y) : base(x, y) {
-
+        public Player(int x, int y, int screenHeight, int screenWidth) : base(x, y) {
+            _rightBoundary = screenWidth - 50;
+            _bottomBoundary = screenHeight - 25;
         }
 
         public override void Draw() {
             Raylib.DrawRectangle(_posX, _posY, 50, 25, Color.Blue);
         }
         public override void HandleInput()
-        {
-            if (Raylib.IsKeyDown(KeyboardKey.W)) {
+        {   if (Raylib.IsKeyDown(KeyboardKey.LeftShift)) {
+                if (Raylib.IsKeyDown(KeyboardKey.W)) {
+                    _posY = Math.Max(_posY - 6, 0);
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.S)) {
+                    _posY = Math.Min(_posY + 6, _bottomBoundary);
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.A)) {
+                    _posX = Math.Max(_posX - 10, 0);
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.D)) {
+                    _posX = Math.Min(_posX + 10, _rightBoundary);
+                }
+            }
+            else {
+                if (Raylib.IsKeyDown(KeyboardKey.W)) {
                 _posY = Math.Max(_posY - 3, 0);
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.S)) {
+                    _posY = Math.Min(_posY + 3, _bottomBoundary);
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.A)) {
+                    _posX = Math.Max(_posX - 5, 0);
+                }
+                if (Raylib.IsKeyDown(KeyboardKey.D)) {
+                    _posX = Math.Min(_posX + 5, _rightBoundary);
+                }
             }
-            if (Raylib.IsKeyDown(KeyboardKey.S)) {
-                _posY = Math.Min(_posY + 3, 575);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.A)) {
-                _posX = Math.Max(_posX - 5, 0);
-            }
-            if (Raylib.IsKeyDown(KeyboardKey.D)) {
-                _posX = Math.Min(_posX + 5, 750);
-            }
+            
         }
 
-        public override void ProcessActions() {
-            
+        public override bool ProcessActions(List<GameObject> gameObjects) {
+            return false;
         }
     public override int GetLeftEdge()
     {
-        return _posY;
+        return _posX;
     }
     public override int GetRightEdge()
     {
-        return _posY + 50;
+        return _posX + 50;
     }
     public override int GetTopEdge()
     {
-        return _posX;
+        return _posY;
     }
     public override int GetBotEdge()
     {
-        return _posX + 25;
+        return _posY + 25;
     }
 }

@@ -1,21 +1,48 @@
+ using Raylib_cs;
 public class Gem : GameObject {
 
 
 
-    public Gem(int x, int y) : base(x, y) {
-
+    public Gem(int x, int y, int screenHeight) : base(x, y) {
+        speed = _rand.Next(1, 6);
+        _bottomBoundary = screenHeight;
     }
 
-    public override void Draw()
-    {
-        throw new NotImplementedException();
+    public override void Draw() {
+        Raylib.DrawRectangle(_posX, _posY, 20, 20, Color.Blue);
     }
-    public override void ProcessActions()
+    public override bool ProcessActions(List<GameObject> gameObjects)
     {
-        throw new NotImplementedException();
+        _posY =_posY + speed;
+        foreach (GameObject obj in gameObjects)
+        {
+            if (obj is Player player && CheckCollision(player))
+            {
+                return true;
+            }
+            if (_posY - 10 >= _bottomBoundary) {
+                return true;
+            }
+        }
+        return false;
     }
     public override void HandleInput()
     {
-        throw new NotImplementedException();
+    }
+    public override int GetLeftEdge()
+    {
+        return _posX;
+    }
+    public override int GetRightEdge()
+    {
+        return _posX + 20;
+    }
+    public override int GetTopEdge()
+    {
+        return _posY;
+    }
+    public override int GetBotEdge()
+    {
+        return _posY + 20;
     }
 }

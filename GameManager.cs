@@ -4,10 +4,11 @@ class GameManager
 {
     public const int SCREEN_WIDTH = 800;
     public const int SCREEN_HEIGHT = 600;
-
+    private Random _rand = new Random();
     private string _title;
     private List<GameObject> _gameObjects = new List<GameObject>();
-
+    private float _spawnTimer = 0f;
+    private float _spawnInterval = 2f;
     public GameManager()
     {
         _title = "CSE 210 Game";
@@ -49,10 +50,8 @@ class GameManager
     /// </summary>
     private void InitializeGame()
     {
-        Player player = new Player(50,50);
+        Player player = new Player(300,500,SCREEN_HEIGHT,SCREEN_WIDTH);
         _gameObjects.Add(player);
-        Bomb bomb = new Bomb(100, 100);
-        _gameObjects.Add(bomb);
     }
 
     /// <summary>
@@ -72,8 +71,22 @@ class GameManager
     /// </summary>
     private void ProcessActions()
     {
-
+        for (int i = _gameObjects.Count -1; i >= 0; i--)
+        {
+            GameObject item = _gameObjects[i];
+            if (item.ProcessActions(_gameObjects)) {
+                 _gameObjects.RemoveAt(i);
+            }
+        }
+         _spawnTimer += Raylib.GetFrameTime();
+        if (_spawnTimer >= _spawnInterval)
+        {
+            SpawnRandomObject();
+            _spawnTimer = 0f;
+        }
+         _spawnInterval = GenerateRandomInterval();
     }
+
 
     /// <summary>
     /// Draws all elements on the screen.
@@ -82,7 +95,32 @@ class GameManager
     {
         foreach (GameObject entity in _gameObjects) {
             entity.Draw();
-            Console.WriteLine("printed objects");
         }
     }
+private void SpawnRandomObject()
+    {
+        
+        int randomX = _rand.Next(20, SCREEN_WIDTH - 20); 
+        Console.WriteLine($"RandomX is: {randomX}");
+        int y = 0;
+        if (_rand.NextDouble() > 0.5)
+        {
+            Bomb bomb = new Bomb(randomX, y, SCREEN_HEIGHT);
+            _gameObjects.Add(bomb);
+        }
+        else
+        {
+            Gem gem = new Gem(randomX, y, SCREEN_HEIGHT);
+            _gameObjects.Add(gem);
+        }
+
+        Console.WriteLine("Spawned a new object!");
+    }
+    private float GenerateRandomInterval()
+{
+    float minInterval = 1f; 
+    float maxInterval = 5f;
+    
+    return (float)(_rand.NextDouble() * (maxInterval - minInterval) + minInterval);
+}
 }
