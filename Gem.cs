@@ -4,27 +4,27 @@ public class Gem : GameObject {
 
 
     public Gem(int x, int y, int screenHeight) : base(x, y) {
-        speed = _rand.Next(1, 6);
+        speed = _rand.Next(3, 10);
         _bottomBoundary = screenHeight;
     }
 
     public override void Draw() {
-        Raylib.DrawRectangle(_posX, _posY, 20, 20, Color.Blue);
+        Raylib.DrawRectangle(_posX, _posY, 20, 20, Color.Green);
     }
-    public override bool ProcessActions(List<GameObject> gameObjects)
+    public override (bool, bool) ProcessActions(List<GameObject> gameObjects)
     {
         _posY =_posY + speed;
         foreach (GameObject obj in gameObjects)
         {
             if (obj is Player player && CheckCollision(player))
             {
-                return true;
+                return (true, true);
             }
             if (_posY - 10 >= _bottomBoundary) {
-                return true;
+                return (true, false);
             }
         }
-        return false;
+        return (false, false);
     }
     public override void HandleInput()
     {
@@ -45,4 +45,5 @@ public class Gem : GameObject {
     {
         return _posY + 20;
     }
+
 }

@@ -7,8 +7,12 @@ class GameManager
     private Random _rand = new Random();
     private string _title;
     private List<GameObject> _gameObjects = new List<GameObject>();
+    private float _diffScalar = 0f;
     private float _spawnTimer = 0f;
-    private float _spawnInterval = 2f;
+    private float _spawnInterval = 1f;
+    private int _score;
+    private int _lives = 3;
+    private bool _defeat;
     public GameManager()
     {
         _title = "CSE 210 Game";
@@ -73,10 +77,26 @@ class GameManager
     {
         for (int i = _gameObjects.Count -1; i >= 0; i--)
         {
-            GameObject item = _gameObjects[i];
-            if (item.ProcessActions(_gameObjects)) {
-                 _gameObjects.RemoveAt(i);
+            if (_defeat) {
+                Raylib.DrawText("Game Over", 300, 300, 30, Color.Red);
             }
+            GameObject item = _gameObjects[i];
+            var (isCollide,isDead) = item.ProcessActions(_gameObjects);
+            if (isCollide && isDead)   {
+                if (item is Bomb) {
+                    _lives --;
+                }
+                if (item is Gem)
+                    _score ++;
+                _gameObjects.RemoveAt(i);
+            }
+            else if (isDead) {
+                _gameObjects.RemoveAt(i);
+            }
+            if (_lives == 0 && item is Player) {
+            _gameObjects.RemoveAt(i);
+            _defeat = true;
+         }
         }
          _spawnTimer += Raylib.GetFrameTime();
         if (_spawnTimer >= _spawnInterval)
@@ -85,6 +105,7 @@ class GameManager
             _spawnTimer = 0f;
         }
          _spawnInterval = GenerateRandomInterval();
+         
     }
 
 
@@ -96,14 +117,16 @@ class GameManager
         foreach (GameObject entity in _gameObjects) {
             entity.Draw();
         }
+        Raylib.DrawText($"Score: {_score}", 10, 10, 32, Color.Black);
+        Raylib.DrawText($"Lives: {_lives}", SCREEN_WIDTH - 150, 10, 32, Color.Black);
     }
 private void SpawnRandomObject()
     {
         
-        int randomX = _rand.Next(20, SCREEN_WIDTH - 20); 
+        int randomX = _rand.Next(20, SCREEN_WIDTH - 20);    
         Console.WriteLine($"RandomX is: {randomX}");
         int y = 0;
-        if (_rand.NextDouble() > 0.5)
+        if (_rand.NextDouble() > 0.4)
         {
             Bomb bomb = new Bomb(randomX, y, SCREEN_HEIGHT);
             _gameObjects.Add(bomb);
@@ -118,8 +141,10 @@ private void SpawnRandomObject()
     }
     private float GenerateRandomInterval()
 {
+    _diffScalar += Raylib.GetFrameTime()/25;
     float minInterval = 1f; 
-    float maxInterval = 5f;
+    float maxInterval = Math.Max(6f - _diffScalar, 0.5f);
+    Console.WriteLine($"Scalar: {_diffScalar}");
     
     return (float)(_rand.NextDouble() * (maxInterval - minInterval) + minInterval);
 }

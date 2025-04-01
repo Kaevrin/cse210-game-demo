@@ -1,4 +1,5 @@
-    using Raylib_cs;
+using System.Runtime.CompilerServices;
+using Raylib_cs;
 
     public class Player : GameObject {
 
@@ -43,8 +44,8 @@
             
         }
 
-        public override bool ProcessActions(List<GameObject> gameObjects) {
-            return false;
+        public override (bool, bool) ProcessActions(List<GameObject> gameObjects) {
+            return (false, false);
         }
     public override int GetLeftEdge()
     {

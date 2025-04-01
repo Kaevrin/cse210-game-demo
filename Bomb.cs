@@ -4,7 +4,7 @@ public class Bomb : GameObject {
     
 
     public Bomb(int x, int y, int screenHeight) : base(x, y) {
-        speed = _rand.Next(1, 6);
+        speed = _rand.Next(4, 12);
         _bottomBoundary = screenHeight;
 
     }
@@ -13,20 +13,20 @@ public class Bomb : GameObject {
     {
         Raylib.DrawCircle(_posX, _posY, 10, Color.Red);
     }
-    public override bool ProcessActions(List<GameObject> gameObjects)
+    public override (bool, bool) ProcessActions(List<GameObject> gameObjects)
     {
         _posY =_posY + speed;
         foreach (GameObject obj in gameObjects)
         {
             if (obj is Player player && CheckCollision(player))
             {
-                return true;
+                return (true, true);
             }
             if (_posY - 10 >= _bottomBoundary) {
-                return true;
+                return (true, false);
             }
         }
-        return false;
+        return (false, false);
     }
     public override void HandleInput()
     {

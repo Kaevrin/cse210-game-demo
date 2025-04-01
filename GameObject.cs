@@ -12,7 +12,7 @@ protected int _bottomBoundary;
     }
 
     public abstract void Draw();
-    public abstract bool ProcessActions(List<GameObject> gameObjects);
+    public abstract (bool, bool) ProcessActions(List<GameObject> gameObjects);
     public abstract void HandleInput();
     public virtual int GetLeftEdge() {
         return 10;
